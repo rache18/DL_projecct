@@ -22,6 +22,7 @@ from model.resnet import ResNet18
 
 model_options = ['resnet18']
 dataset_options = ['cifar10']
+cutout_options = ['None','Cutout','Cutout_intesity']
 
 parser = argparse.ArgumentParser(description='CNN')
 parser.add_argument('--dataset', '-d', default='cifar10',
@@ -36,7 +37,7 @@ parser.add_argument('--learning_rate', type=float, default=0.1,
                     help='learning rate')
 parser.add_argument('--data_augmentation', action='store_true', default=False,
                     help='augment data by flipping and cropping')
-parser.add_argument('--cutout', action='store_true', default=False,
+parser.add_argument('--cutout',default='None', choices=cutout_options,
                     help='apply cutout')
 parser.add_argument('--n_holes', type=int, default=1,
                     help='number of holes to cut out from image')
@@ -69,9 +70,10 @@ if args.data_augmentation:
     train_transform.transforms.append(transforms.RandomHorizontalFlip())
 train_transform.transforms.append(transforms.ToTensor())
 train_transform.transforms.append(normalize)
-if args.cutout:
-    train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length))
-
+if args.cutout == 'Cutout':
+  train_transform.transforms.append(Cutout(n_holes=args.n_holes, length=args.length))
+if args.cutout == 'Cutout_intesity':
+  train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length))
 
 test_transform = transforms.Compose([
     transforms.ToTensor(),
