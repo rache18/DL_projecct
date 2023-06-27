@@ -16,6 +16,7 @@ from torchvision import datasets, transforms
 
 from util.misc import CSVLogger
 from util.cutout import Cutout
+from util.cutout_intesity import Cutout_intensity
 
 from model.resnet import ResNet18
 
@@ -69,7 +70,7 @@ if args.data_augmentation:
 train_transform.transforms.append(transforms.ToTensor())
 train_transform.transforms.append(normalize)
 if args.cutout:
-    train_transform.transforms.append(Cutout(n_holes=args.n_holes, length=args.length))
+    train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length))
 
 
 test_transform = transforms.Compose([
@@ -153,6 +154,7 @@ for epoch in range(args.epochs):
 
         cnn.zero_grad()
         pred = cnn(images)
+
 
         xentropy_loss = criterion(pred, labels)
         xentropy_loss.backward()

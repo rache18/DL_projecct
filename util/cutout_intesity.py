@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 
-class Cutout(object):
+class Cutout_intensity(object):
     """Randomly mask out one or more patches from an image.
 
     Args:
