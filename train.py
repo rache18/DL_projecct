@@ -59,7 +59,7 @@ test_id = args.dataset + '_' + args.model
 print(args)
 
 # Image Preprocessing
-    normalize = transforms.Normalize(mean=[x / 255.0 for x in [125.3, 123.0, 113.9]],
+normalize = transforms.Normalize(mean=[x / 255.0 for x in [125.3, 123.0, 113.9]],
                                      std=[x / 255.0 for x in [63.0, 62.1, 66.7]])
 
 train_transform = transforms.Compose([])
