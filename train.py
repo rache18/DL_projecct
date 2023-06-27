@@ -18,7 +18,6 @@ from util.misc import CSVLogger
 from util.cutout import Cutout
 
 from model.resnet import ResNet18
-from model.wide_resnet import WideResNet
 
 model_options = ['resnet18']
 dataset_options = ['cifar10']
