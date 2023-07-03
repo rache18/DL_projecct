@@ -16,6 +16,7 @@ from torchvision import datasets, transforms
 from util.misc import CSVLogger
 from util.cutout import Cutout
 from util.cutout_intensity import Cutout_intensity
+from util.Cutout_Shape import Cutout_Shape
 
 from model.resnet import ResNet18
 
@@ -41,6 +42,8 @@ parser.add_argument('--data_augmentation', action='store_true', default=False,
                     help='augment data by flipping and cropping')
 parser.add_argument('--cutout' ,default='None', choices=cutout_options,
                     help='apply cutout')
+parser.add_argument('--shape', default='square', choices=shape_options,
+                    help='shape of the cutout')
 parser.add_argument('--n_holes', type=int, default=1,
                     help='number of holes to cut out from image')
 parser.add_argument('--length', type=int, default=16,
@@ -49,8 +52,7 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=0,
                     help='random seed (default: 1)')
-parser.add_argument('--shape', default='square', choices=shape_options,
-                    help='shape of the cutout')
+
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -79,7 +81,7 @@ if args.cutout == 'Cutout':
 if args.cutout == 'Cutout_intesity':
     train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length, shape=args.shape))
 if args.cutout == 'Cutout_Shape':
-    train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length, shape=args.shape))
+    train_transform.transforms.append(Cutout_Shape(n_holes=args.n_holes, length=args.length, shape=args.shape))
 
 test_transform = transforms.Compose([
     transforms.ToTensor(),

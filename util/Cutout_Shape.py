@@ -10,7 +10,7 @@ class Cutout_Shape(object):
         length (int): The length (in pixels) of each square patch.
         shape (str): Shape of the mask. Can be 'square', 'circle', or 'triangle'.
     """
-    def __init__(self, n_holes, length, shape='square'):
+    def __init__(self, n_holes, length, shape='circle'):
         self.n_holes = n_holes
         self.length = length
         self.shape = shape
@@ -40,9 +40,10 @@ class Cutout_Shape(object):
                 mask[y1: y2, x1: x2] = 0.
 
             elif self.shape == 'circle':
-                r = self.length // 2
+                size = np.random.randint(8,16)
+                radius = min(h, w) // size  # Set radius to 1/size:2 of the image size
                 y_grid, x_grid = np.ogrid[:h, :w]
-                mask_circle = (x_grid - x) * 2 + (y_grid - y) * 2 <= r ** 2
+                mask_circle = (x_grid - x) ** 2 + (y_grid - y) ** 2 <= radius ** 2
                 mask[mask_circle] = 0.
 
             elif self.shape == 'triangle':
