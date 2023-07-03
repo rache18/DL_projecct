@@ -44,8 +44,8 @@ class Cutout_intensity(object):
 
             # Randomly generate the intensity level
             intensity = np.random.uniform(0, self.max_intensity)
-            if intensity > 0.5:
-                intensity = 1.0
+            if intensity > 0.85:
+              intensity = 0.5
 
             # Apply the cutout patch with varying intensity
             mask[y1:y2, x1:x2] = intensity

@@ -16,7 +16,7 @@ from torchvision import datasets, transforms
 
 from util.misc import CSVLogger
 from util.cutout import Cutout
-from util.cutout_intesity import Cutout_intensity
+from util.cutout_intensity import Cutout_intensity
 
 from model.resnet import ResNet18
 
