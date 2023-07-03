@@ -22,7 +22,8 @@ from model.resnet import ResNet18
 
 model_options = ['resnet18']
 dataset_options = ['cifar10']
-cutout_options = ['None','Cutout','Cutout_intesity']
+cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape']
+shape_options = ['square', 'circle', 'triangle']
 
 parser = argparse.ArgumentParser(description='CNN')
 parser.add_argument('--dataset', '-d', default='cifar10',
@@ -47,6 +48,8 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=0,
                     help='random seed (default: 1)')
+parser.add_argument('--shape', default='square', choices=shape_options,
+                    help='shape of the cutout')
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -74,6 +77,8 @@ if args.cutout == 'Cutout':
   train_transform.transforms.append(Cutout(n_holes=args.n_holes, length=args.length))
 if args.cutout == 'Cutout_intesity':
   train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length))
+if args.cutout == 'Cutout_Shape':
+  train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length, shape=args.shape))
 
 test_transform = transforms.Compose([
     transforms.ToTensor(),
