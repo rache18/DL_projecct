@@ -1,5 +1,4 @@
 
-
 import pdb
 import argparse
 import numpy as np
@@ -20,6 +19,8 @@ from util.cutout_intensity import Cutout_intensity
 
 from model.resnet import ResNet18
 
+import matplotlib.pyplot as plt
+
 model_options = ['resnet18']
 dataset_options = ['cifar10']
 cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape']
@@ -38,7 +39,7 @@ parser.add_argument('--learning_rate', type=float, default=0.1,
                     help='learning rate')
 parser.add_argument('--data_augmentation', action='store_true', default=False,
                     help='augment data by flipping and cropping')
-parser.add_argument('--cutout',default='None', choices=cutout_options,
+parser.add_argument('--cutout' ,default='None', choices=cutout_options,
                     help='apply cutout')
 parser.add_argument('--n_holes', type=int, default=1,
                     help='number of holes to cut out from image')
@@ -65,7 +66,7 @@ print(args)
 
 # Image Preprocessing
 normalize = transforms.Normalize(mean=[x / 255.0 for x in [125.3, 123.0, 113.9]],
-                                     std=[x / 255.0 for x in [63.0, 62.1, 66.7]])
+                                 std=[x / 255.0 for x in [63.0, 62.1, 66.7]])
 
 train_transform = transforms.Compose([])
 if args.data_augmentation:
@@ -74,11 +75,11 @@ if args.data_augmentation:
 train_transform.transforms.append(transforms.ToTensor())
 train_transform.transforms.append(normalize)
 if args.cutout == 'Cutout':
-  train_transform.transforms.append(Cutout(n_holes=args.n_holes, length=args.length))
+    train_transform.transforms.append(Cutout(n_holes=args.n_holes, length=args.length, shape=args.shape))
 if args.cutout == 'Cutout_intesity':
-  train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length))
+    train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length, shape=args.shape))
 if args.cutout == 'Cutout_Shape':
-  train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length, shape=args.shape))
+    train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length, shape=args.shape))
 
 test_transform = transforms.Compose([
     transforms.ToTensor(),
@@ -87,9 +88,9 @@ test_transform = transforms.Compose([
 # for the 'cifar10' dataset:
 num_classes = 10
 train_dataset = datasets.CIFAR10(root='data/',
-                                  train=True,
-                                  transform=train_transform,
-                                  download=True)
+                                 train=True,
+                                 transform=train_transform,
+                                 download=True)
 
 test_dataset = datasets.CIFAR10(root='data/',
                                 train=False,
@@ -110,7 +111,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                           pin_memory=True,
                                           num_workers=2)
 
-#imply the 'resnet18':
+# imply the 'resnet18':
 cnn = ResNet18(num_classes=num_classes)
 
 cnn = cnn.cuda()
@@ -178,6 +179,21 @@ for epoch in range(args.epochs):
         progress_bar.set_postfix(
             xentropy='%.3f' % (xentropy_loss_avg / (i + 1)),
             acc='%.3f' % accuracy)
+
+        # Visualize the first image in the batch after normalization
+        if i == 0 and epoch == 0:
+            image = images[0].cpu().numpy()
+            image = np.transpose(image, (1, 2, 0))  # Transpose (C, H, W) to (H, W, C)
+            image = image * [x / 255.0 for x in [63.0, 62.1, 66.7]] + [x / 255.0 for x in [125.3, 123.0, 113.9]]
+            image = np.clip(image, 0, 1)  # Clip values to [0, 1] range
+
+            plt.imshow(image)
+            plt.title(f"Epoch: {epoch}, Label: {labels[0]}")
+            plt.axis('off')
+
+            # Save the image instead of displaying it interactively
+            plt.savefig(f"image_epoch_{epoch}_label_{labels[0]}.png")
+            plt.close()  # Close the plot to free up memory
 
 
     test_acc = test(test_loader)
