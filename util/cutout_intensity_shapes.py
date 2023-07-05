@@ -10,7 +10,7 @@ class Cutout_intensity_shapes(object):
         length (int): The maximum length (in pixels) of each patch.
         max_intensity (float): The maximum intensity of the cutout patches (between 0 and 1).
     """
-    def __init__(self, n_holes, length, max_intensity=1.0 , shape = 'square'):
+    def __init__(self, n_holes, length, max_intensity=0.5 , shape = 'square'):
         self.n_holes = n_holes
         self.length = length
         self.max_intensity = max_intensity
@@ -34,8 +34,6 @@ class Cutout_intensity_shapes(object):
 
             # Randomly generate the intensity level
             intensity = np.random.uniform(0, self.max_intensity)
-            if intensity > 0.85:
-              intensity = 0.5
 
             if self.shape == 'square':
                 y1 = np.clip(y - self.length // 2, 0, h)
