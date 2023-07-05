@@ -17,6 +17,7 @@ from util.misc import CSVLogger
 from util.cutout import Cutout
 from util.cutout_intensity import Cutout_intensity
 from util.Cutout_Shape import Cutout_Shape
+from util.cutout_intensity_shapes import Cutout_intensity_shapes
 
 from model.resnet import ResNet18
 
@@ -24,7 +25,7 @@ import matplotlib.pyplot as plt
 
 model_options = ['resnet18']
 dataset_options = ['cifar10']
-cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape']
+cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape','Cutout_intensity_shapes']
 shape_options = ['square', 'circle', 'triangle']
 
 parser = argparse.ArgumentParser(description='CNN')
@@ -76,12 +77,17 @@ if args.data_augmentation:
     train_transform.transforms.append(transforms.RandomHorizontalFlip())
 train_transform.transforms.append(transforms.ToTensor())
 train_transform.transforms.append(normalize)
+
+
 if args.cutout == 'Cutout':
     train_transform.transforms.append(Cutout(n_holes=args.n_holes, length=args.length, shape=args.shape))
 if args.cutout == 'Cutout_intesity':
     train_transform.transforms.append(Cutout_intensity(n_holes=args.n_holes, length=args.length, shape=args.shape))
 if args.cutout == 'Cutout_Shape':
     train_transform.transforms.append(Cutout_Shape(n_holes=args.n_holes, length=args.length, shape=args.shape))
+if args.cutout == 'Cutout_intensity_shapes':
+    train_transform.transforms.append(Cutout_intensity_shapes(n_holes=args.n_holes, length=args.length, shape=args.shape))
+
 
 test_transform = transforms.Compose([
     transforms.ToTensor(),
@@ -107,11 +113,18 @@ train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            pin_memory=True,
                                            num_workers=2)
 
+# Print the size of the training dataset after augmentation
+print("Size of training dataset after augmentation:", len(train_loader.dataset))
+
+
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                           batch_size=args.batch_size,
                                           shuffle=False,
                                           pin_memory=True,
                                           num_workers=2)
+
+# Print the size of the test dataset
+print("Size of test dataset:", len(test_loader.dataset))
 
 # imply the 'resnet18':
 cnn = ResNet18(num_classes=num_classes)
@@ -151,11 +164,13 @@ def test(loader):
 
 for epoch in range(args.epochs):
 
+
     xentropy_loss_avg = 0.
     correct = 0.
     total = 0.
 
     progress_bar = tqdm(train_loader)
+
     for i, (images, labels) in enumerate(progress_bar):
         progress_bar.set_description('Epoch ' + str(epoch))
 
@@ -183,7 +198,7 @@ for epoch in range(args.epochs):
             acc='%.3f' % accuracy)
 
         # Visualize the first image in the batch after normalization
-        if i == 0 and epoch == 0:
+        if i == 4 and epoch == 0:
             image = images[0].cpu().numpy()
             image = np.transpose(image, (1, 2, 0))  # Transpose (C, H, W) to (H, W, C)
             image = image * [x / 255.0 for x in [63.0, 62.1, 66.7]] + [x / 255.0 for x in [125.3, 123.0, 113.9]]
