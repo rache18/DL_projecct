@@ -1,4 +1,3 @@
-
 import pdb
 import argparse
 import numpy as np
@@ -25,7 +24,7 @@ import matplotlib.pyplot as plt
 
 model_options = ['resnet18']
 dataset_options = ['cifar10']
-cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape','Cutout_intensity_shapes']
+cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape', 'Cutout_intensity_shapes']
 shape_options = ['square', 'circle', 'triangle']
 
 parser = argparse.ArgumentParser(description='CNN')
@@ -41,7 +40,7 @@ parser.add_argument('--learning_rate', type=float, default=0.1,
                     help='learning rate')
 parser.add_argument('--data_augmentation', action='store_true', default=False,
                     help='augment data by flipping and cropping')
-parser.add_argument('--cutout' ,default='None', choices=cutout_options,
+parser.add_argument('--cutout', default='None', choices=cutout_options,
                     help='apply cutout')
 parser.add_argument('--shape', default='square', choices=shape_options,
                     help='shape of the cutout')
@@ -53,7 +52,6 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=0,
                     help='random seed (default: 1)')
-
 
 args = parser.parse_args()
 args.cuda = not args.no_cuda and torch.cuda.is_available()
@@ -75,9 +73,16 @@ train_transform = transforms.Compose([])
 if args.data_augmentation:
     train_transform.transforms.append(transforms.RandomCrop(32, padding=4))
     train_transform.transforms.append(transforms.RandomHorizontalFlip())
+
+    # those who got the best acc are RandomRotation (0.414 ) and ColorJitter (0.378) for one epoch:
+
+    # train_transform.transforms.append(transforms.RandomVerticalFlip())
+    # train_transform.transforms.append(transforms.Grayscale(3))
+    # train_transform.transforms.append(transforms.RandomRotation(10)) good acc for 1 epoch
+    # train_transform.transforms.append(transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1))
+
 train_transform.transforms.append(transforms.ToTensor())
 train_transform.transforms.append(normalize)
-
 
 if args.cutout == 'Cutout':
     train_transform.transforms.append(Cutout(n_holes=args.n_holes, length=args.length, shape=args.shape))
@@ -86,8 +91,8 @@ if args.cutout == 'Cutout_intesity':
 if args.cutout == 'Cutout_Shape':
     train_transform.transforms.append(Cutout_Shape(n_holes=args.n_holes, length=args.length, shape=args.shape))
 if args.cutout == 'Cutout_intensity_shapes':
-    train_transform.transforms.append(Cutout_intensity_shapes(n_holes=args.n_holes, length=args.length, shape=args.shape))
-
+    train_transform.transforms.append(
+        Cutout_intensity_shapes(n_holes=args.n_holes, length=args.length, shape=args.shape))
 
 test_transform = transforms.Compose([
     transforms.ToTensor(),
@@ -105,7 +110,6 @@ test_dataset = datasets.CIFAR10(root='data/',
                                 transform=test_transform,
                                 download=True)
 
-
 # Data Loader (Input Pipeline)
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=args.batch_size,
@@ -115,7 +119,6 @@ train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
 
 # Print the size of the training dataset after augmentation
 print("Size of training dataset after augmentation:", len(train_loader.dataset))
-
 
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                           batch_size=args.batch_size,
@@ -142,7 +145,7 @@ csv_logger = CSVLogger(args=args, fieldnames=['epoch', 'train_acc', 'test_acc'],
 
 
 def test(loader):
-    cnn.eval()    # Change model to 'eval' mode (BN uses moving mean/var).
+    cnn.eval()  # Change model to 'eval' mode (BN uses moving mean/var).
     correct = 0.
     total = 0.
     for images, labels in loader:
@@ -164,7 +167,6 @@ def test(loader):
 
 for epoch in range(args.epochs):
 
-
     xentropy_loss_avg = 0.
     correct = 0.
     total = 0.
@@ -179,7 +181,6 @@ for epoch in range(args.epochs):
 
         cnn.zero_grad()
         pred = cnn(images)
-
 
         xentropy_loss = criterion(pred, labels)
         xentropy_loss.backward()
@@ -198,7 +199,7 @@ for epoch in range(args.epochs):
             acc='%.3f' % accuracy)
 
         # Visualize the first image in the batch after normalization
-        if i == 4 and epoch == 0:
+        if i == 44 and epoch == 0:
             image = images[0].cpu().numpy()
             image = np.transpose(image, (1, 2, 0))  # Transpose (C, H, W) to (H, W, C)
             image = image * [x / 255.0 for x in [63.0, 62.1, 66.7]] + [x / 255.0 for x in [125.3, 123.0, 113.9]]
@@ -211,7 +212,6 @@ for epoch in range(args.epochs):
             # Save the image instead of displaying it interactively
             plt.savefig(f"image_epoch_{epoch}_label_{labels[0]}.png")
             plt.close()  # Close the plot to free up memory
-
 
     test_acc = test(test_loader)
     tqdm.write('test_acc: %.3f' % (test_acc))
