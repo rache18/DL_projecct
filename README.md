@@ -8,8 +8,7 @@ Sapir & Racheli
 	we now implement diefferent augmentations combinations whit marking each augmentation as note/command on the 	train.py itself. consider add "augmentation_options" such as "shape_options" to pick combination when running the 	model
 
 2. change number of cutouts in an image ( instead of 1 , we will make 2/3 .. ), change shape, change inensity -> done with holes 
-3. contact encoder 
-4. dropout for cnn (spatialDropout) 
+3. dropout for cnn (spatialDropout) 
 
 * we need to check any of those 4 options seperattly and then check combinations of them. 
 
@@ -27,3 +26,10 @@ Normalize: Normalizes the image by subtracting the mean and dividing by the stan
 
 ColorJitter: Adjusts the brightness, contrast, saturation, and hue of the image by random amounts. This augmentation adds variation to the color space, making the model more robust to different lighting conditions.
 
+
+<u> need to run </u>
+1. padding + RandomRotation
+2. padding+ColorJitter
+3. ColorJitter+RandomRotation
+4. ColorJitter+RandomHorizontalFlip
+5. padding+ColorJitte+RandomHorizontalFlip
