@@ -1,35 +1,45 @@
-# DL_projecct
+# DL_projecct , 2023 
 
 Sapir & Racheli
 
+this ripository contains several different models that compare between different shapes of cutouts, transparncy in changes levels of cutouts and different implmentations of data augmentation in aim to find the best model that will benefit architecture of ResNet18. 
 
-<u> things we want to change : </u>
-1. add augmentation
-	we now implement diefferent augmentations combinations whit marking each augmentation as note/command on the 	train.py itself. consider add "augmentation_options" such as "shape_options" to pick combination when running the 	model
-
-2. change number of cutouts in an image ( instead of 1 , we will make 2/3 .. ), change shape, change inensity -> done with holes 
-3. dropout for cnn (spatialDropout) 
-
-* we need to check any of those 4 options seperattly and then check combinations of them. 
-
-* finally, we can show that the best model is good for other models ( wide resnet, others.. ) 
+models were run over CIFAR-10 dataset for object detection (classification) task 
 
 
-<u> about augmentation taken: </u>
-RandomHorizontalFlip: Flips the image horizontally with a probability of 0.5. This augmentation helps the model become invariant to horizontal flips, which is a common transformation in images.
+<u> to run the models follow those steps: </u>
+use GPU 
 
-RandomCrop: Randomly crops a portion of the image. This augmentation helps the model learn translation invariance and increases robustness.
+1. run the commands:
+	 !git clone https://github.com/rache18/DL_projecct.git
+	 %cd /content/DL_projecct
+	 !mkdir checkpoints
 
-RandomRotation: Rotates the image by a random angle within a specified range. This augmentation helps the model become invariant to rotations.
+2. Run the command train.py after setting the args of the model you want implement: 
 
-Normalize: Normalizes the image by subtracting the mean and dividing by the standard deviation. This normalization helps in reducing the scale differences between features and stabilizes the training process.
+	cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape', 'Cutout_intensity_shapes']
+	shape_options = ['square', 'circle', 'triangle']
 
-ColorJitter: Adjusts the brightness, contrast, saturation, and hue of the image by random amounts. This augmentation adds variation to the color space, making the model more robust to different lighting conditions.
+	to use data augmentation add the arg --data_augmentation to the command.
+	
+	choose length of shape ( 16 is optimal for square )
+
+	choose number of epochs to run
+
+	best model: !python train.py --dataset cifar10 --data_augmentation --model resnet18 --cutout Cutout_Shape --shape square --length 16 --epochs 150
 
 
-<u> need to run </u>
-1. padding + RandomRotation
-2. padding+ColorJitter
-3. ColorJitter+RandomRotation
-4. ColorJitter+RandomHorizontalFlip
-5. padding+ColorJitte+RandomHorizontalFlip
+*  data augmentation was defined to be the combination who got best results : 
+   RandomCrop(32, padding=4)
+   RandomHorizontalFlip()
+
+results: 
+will be printed on terminal and cvs.file will be created inside "logs" folder 
+
+# all different models is inside "utils" folder 
+
+* "csv models 150 epochs" folder contains csv files with results of models that have been run
+
+* "referens" folder contains the paper of the project 
+
+* "plots" folder contains plot.py to ploting each csv file, and plots for example
