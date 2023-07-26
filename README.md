@@ -17,20 +17,20 @@ use GPU
 
 2. Run the command train.py after setting the args of the model you want implement: 
 
-	cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape', 'Cutout_intensity_shapes']
-	shape_options = ['square', 'circle', 'triangle']
+	cutout_options = ['None', 'Cutout', 'Cutout_intesity', 'Cutout_Shape', 'Cutout_intensity_shapes'] <br>
+	shape_options = ['square', 'circle', 'triangle'] 
 
 	to use data augmentation add the arg --data_augmentation to the command.
 	
-	choose length of shape ( 16 is optimal for square )
+	choose length of shape (16 is optimal for square )
 
 	choose number of epochs to run
 
-	best model: !python train.py --dataset cifar10 --data_augmentation --model resnet18 --cutout Cutout_Shape --shape square --length 16 --epochs 150
+	**best model:** !python train.py --dataset cifar10 --data_augmentation --model resnet18 --cutout Cutout_Shape --shape square --length 16 --epochs 150
 
 
-*  data augmentation was defined to be the combination who got best results : 
-   RandomCrop(32, padding=4)
+*  data augmentation was defined to be the combination who got best results : <br>
+   RandomCrop(32, padding=4)  <br>
    RandomHorizontalFlip()
 
 results: 
