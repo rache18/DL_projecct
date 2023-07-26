@@ -36,7 +36,7 @@ use GPU
 results: 
 will be printed on terminal and cvs.file will be created inside "logs" folder 
 
-*all different models is inside "utils" folder*
+**all different models is inside "utils" folder**
 
 * "csv models 150 epochs" folder contains csv files with results of models that have been run
 
