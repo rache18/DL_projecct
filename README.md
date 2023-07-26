@@ -11,8 +11,8 @@ models were run over CIFAR-10 dataset for object detection (classification) task
 use GPU 
 
 1. run the commands:
-	 !git clone https://github.com/rache18/DL_projecct.git
-	 %cd /content/DL_projecct
+	 !git clone https://github.com/rache18/DL_projecct.git <br>
+	 %cd /content/DL_projecct <br>
 	 !mkdir checkpoints
 
 2. Run the command train.py after setting the args of the model you want implement: 
